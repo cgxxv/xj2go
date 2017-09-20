@@ -56,6 +56,10 @@ func (xj *XJ) XMLToStruct(filename, pkg string) {
 	// TODO: not work well
 	strct := xj.pathsToNodes(paths)
 
+	if ok, _ := pathExists(pkg); !ok {
+		os.Mkdir(pkg, 0755)
+	}
+
 	if ok, _ := pathExists(filename); ok {
 		if err := os.Remove(filename); err != nil {
 			log.Fatal(err)
