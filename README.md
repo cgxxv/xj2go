@@ -1,5 +1,7 @@
 # xj2go
 
+[![Build Status](https://www.travis-ci.org/stackerzzq/xj2go.svg?branch=master)](https://www.travis-ci.org/stackerzzq/xj2go)
+
 The goal is to convert xml or json file to go struct file.
 
 

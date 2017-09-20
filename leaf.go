@@ -6,11 +6,14 @@ import (
 )
 
 func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode, noattr bool) {
+	// fmt.Println("path =>", path) //, "\tnode =>", node, "\tnoattr =>", noattr
 	if !noattr || node != "#text" {
-		if path != "" && node[:1] != "[" {
-			path += "."
+		if node != "" {
+			if path != "" && node[:1] != "[" {
+				path += "."
+			}
+			path += node
 		}
-		path += node
 	}
 
 	switch m.(type) {

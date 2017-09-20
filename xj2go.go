@@ -2,6 +2,7 @@ package xj2go
 
 import (
 	"encoding/xml"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -49,7 +50,11 @@ func (xj *XJ) XMLToStruct(filename, pkg string) {
 	m, _ := xj.xmlToMap("", nil)
 	l := &[]leafNode{}
 	xj.leafNodes("", "", m, l, false)
+	for _, v := range *l {
+		fmt.Println(v.path)
+	}
 	paths := xj.leafPaths(*l)
+	// TODO: not work well
 	strct := xj.pathsToNodes(paths)
 
 	if ok, _ := pathExists(filename); ok {
@@ -75,13 +80,8 @@ func (xj *XJ) XMLToStruct(filename, pkg string) {
 				typ = strings.Title(snodes[i].Type)
 			}
 
-			tag := snodes[i].Tag
-			if tag != "" {
-				tag = "\t`" + tag + "`"
-			}
-
-			// s += "\t" + strings.Title(snodes[i].Name) + "\t" + typ + tag + "\n"
-			file.WriteString("\t" + strings.Title(snodes[i].Name) + "\t" + typ + tag + "\n")
+			// s += "\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n"
+			file.WriteString("\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n")
 		}
 		// s += "}\n"
 		file.WriteString("}\n")
