@@ -32,15 +32,15 @@ func Test_xmlToMap(t *testing.T) {
 
 func Test_XMLToStruct(t *testing.T) {
 	fs := []string{
-		// "./testxml/[Content_Types].xml",
-		// "./testxml/xl/workbook.xml",
+		"./testxml/[Content_Types].xml",
+		"./testxml/xl/workbook.xml",
 		// "./testxml/xl/styles.xml", // TODO: need validiate
-		// "./testxml/xl/sharedStrings.xml",
-		// "./testxml/xl/_rels/workbook.xml.rels",
+		"./testxml/xl/sharedStrings.xml",
+		"./testxml/xl/_rels/workbook.xml.rels",
 		// "./testxml/xl/theme/theme1.xml", // TODO: need validiate
 		// "./testxml/xl/worksheets/sheet1.xml", // TODO: need validiate
 		"./testxml/docProps/app.xml",
-		"./testxml/docProps/core.xml", // TODO: not ok
+		// "./testxml/docProps/core.xml", // TODO: not ok
 	}
 
 	for k, v := range fs {

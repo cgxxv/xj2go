@@ -2,7 +2,6 @@ package xj2go
 
 import (
 	"encoding/xml"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -50,9 +49,9 @@ func (xj *XJ) XMLToStruct(filename, pkg string) {
 	m, _ := xj.xmlToMap("", nil)
 	l := &[]leafNode{}
 	xj.leafNodes("", "", m, l, false)
-	for _, v := range *l {
-		fmt.Println(v.path)
-	}
+	// for _, v := range *l {
+	// 	fmt.Println(v.path)
+	// }
 	paths := xj.leafPaths(*l)
 	// TODO: not work well
 	strct := xj.pathsToNodes(paths)
