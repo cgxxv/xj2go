@@ -16,12 +16,27 @@ func (xj *XJ) leafPaths(lns []leafNode) []string {
 func (xj *XJ) leafPath(e, root string, paths []string) map[string][]strctNode {
 	strct := make(map[string][]strctNode)
 	for _, path := range paths {
-		sp := strings.TrimPrefix(path, e)
-		if len(sp) <= 0 || (sp[:1] != "[" && sp[:1] != ".") {
+		var spath string
+		if eld := strings.LastIndex(e, "."); eld > 0 {
+			elp := e[eld:] // with .
+
+			if pos := strings.Index(path, elp); pos > 0 {
+				pre := path[:pos]
+				rest := strings.TrimPrefix(path, pre)
+				pre = re.ReplaceAllString(pre, "") // replace [1] with ""
+				spath = pre + rest
+			}
+		} else {
+			spath = path
+		}
+
+		chkpath := strings.TrimPrefix(spath, e)
+		if !(chkpath == "" || chkpath[:1] == "[" || chkpath[:1] == ".") {
 			continue
 		}
-		if len(path) > len(e) && path[:len(e)] == e {
-			path = strings.TrimPrefix(path, e)
+
+		if len(spath) > len(e) && spath[:len(e)] == e {
+			path = strings.TrimPrefix(spath, e)
 			if path == "" {
 				continue
 			}

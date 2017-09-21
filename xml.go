@@ -55,24 +55,18 @@ func (xj *XJ) xmlToMap(sk string, attr []xml.Attr) (map[string]interface{}, erro
 				ma[k] = v
 			}
 		case xml.EndElement:
-			// fmt.Println(sk, ma)
-			// if len(ma) > 0 {
-			// 	m[sk] = ma
-			// }
-			if sk != "" {
+			if len(ma) > 0 {
 				m[sk] = ma
 			}
 			return m, nil
 		case xml.CharData:
 			tt := strings.Trim(string(t.(xml.CharData)), "\t\r\b\n ")
 			if tt != "" {
-				// ma["#text"] = tt
 				if sk != "" {
 					m[sk] = tt
 				}
 			}
 		default:
-			// fmt.Println("unknown type")
 		}
 	}
 }

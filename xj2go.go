@@ -2,7 +2,6 @@ package xj2go
 
 import (
 	"encoding/xml"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -47,17 +46,9 @@ func New(filename string) *XJ {
 // XMLToStruct convert xml to go struct and write this struct to a go file
 func (xj *XJ) XMLToStruct(filename, pkg string) error {
 	m, _ := xj.xmlToMap("", nil)
-	// fmt.Println()
-	// fmt.Printf("%#v\r\n", m)
-	// fmt.Println()
 	l := &[]leafNode{}
-	xj.leafNodes("", "", m, l, false)
-	fmt.Println()
+	xj.leafNodes("", "", m, l)
 	paths := xj.leafPaths(*l)
-	for k, path := range paths {
-		fmt.Println(k, path)
-	}
-	fmt.Println(len(paths))
 	strcts := xj.pathsToNodes(paths)
 
 	if ok, _ := pathExists(pkg); !ok {

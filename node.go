@@ -1,7 +1,6 @@
 package xj2go
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -24,52 +23,57 @@ func (xj *XJ) pathsToNodes(paths []string) []map[string][]strctNode {
 			root := es[len(es)-1]
 			strct := xj.leafPath(e, root, paths)
 			if strct != nil {
-				strcts = append(strcts, strct)
+				m := 0
+				for key, vals := range strct {
+					for _, stct := range strcts {
+						if _, ok := stct[key]; !ok {
+							continue
+						}
+						for j := 0; j < len(vals); j++ {
+							n := 0
+							for k := 0; k < len(stct[key]); k++ {
+								if vals[j].Name == stct[key][k].Name {
+									n++
+								}
+							}
+							if n == 0 {
+								stct[key] = append(stct[key], vals[j])
+							}
+						}
+						m++
+					}
+				}
+				if m == 0 {
+					strcts = append(strcts, strct)
+				}
 			}
 		}
-	}
-
-	fmt.Println()
-
-	for e := range exist {
-		fmt.Println(e)
 	}
 
 	return strcts
 }
 
-func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode, noattr bool) {
-	// fmt.Println("path =>", path) //, "\tnode =>", node, "\tnoattr =>", noattr
-	if !noattr || node != "#text" {
-		if node != "" {
-			if path != "" && node[:1] != "[" {
-				path += "."
-			}
-			path += node
+func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode) {
+	if node != "" {
+		if path != "" && node[:1] != "[" {
+			path += "."
 		}
+		path += node
 	}
 
 	switch m.(type) {
 	case map[string]interface{}:
-		i := 0
 		for k, v := range m.(map[string]interface{}) {
-			i++
-			if noattr {
-				continue
-			}
-			xj.leafNodes(path, k, v, l, noattr)
+			xj.leafNodes(path, k, v, l)
 		}
-		// to fix when m is empty, TODO: need better code
-		// if i == 0 {
-		// 	n := leafNode{path, m}
-		// 	*l = append(*l, n)
-		// }
 	case []interface{}:
 		for i, v := range m.([]interface{}) {
-			xj.leafNodes(path, "["+strconv.Itoa(i)+"]", v, l, noattr)
+			xj.leafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
 		}
 	default:
-		n := leafNode{path, m}
-		*l = append(*l, n)
+		if m != nil {
+			n := leafNode{path, m}
+			*l = append(*l, n)
+		}
 	}
 }
