@@ -55,7 +55,11 @@ func (xj *XJ) xmlToMap(sk string, attr []xml.Attr) (map[string]interface{}, erro
 				ma[k] = v
 			}
 		case xml.EndElement:
-			if len(ma) > 0 {
+			// fmt.Println(sk, ma)
+			// if len(ma) > 0 {
+			// 	m[sk] = ma
+			// }
+			if sk != "" {
 				m[sk] = ma
 			}
 			return m, nil

@@ -2,6 +2,7 @@ package xj2go
 
 import (
 	"encoding/xml"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -27,7 +28,6 @@ type strctNode struct {
 
 var (
 	re    *regexp.Regexp
-	strct map[string][]strctNode
 	exist map[string]bool
 )
 
@@ -45,16 +45,20 @@ func New(filename string) *XJ {
 }
 
 // XMLToStruct convert xml to go struct and write this struct to a go file
-func (xj *XJ) XMLToStruct(filename, pkg string) {
+func (xj *XJ) XMLToStruct(filename, pkg string) error {
 	m, _ := xj.xmlToMap("", nil)
+	// fmt.Println()
+	// fmt.Printf("%#v\r\n", m)
+	// fmt.Println()
 	l := &[]leafNode{}
 	xj.leafNodes("", "", m, l, false)
-	// for _, v := range *l {
-	// 	fmt.Println(v.path)
-	// }
+	fmt.Println()
 	paths := xj.leafPaths(*l)
-	// TODO: not work well
-	strct := xj.pathsToNodes(paths)
+	for k, path := range paths {
+		fmt.Println(k, path)
+	}
+	fmt.Println(len(paths))
+	strcts := xj.pathsToNodes(paths)
 
 	if ok, _ := pathExists(pkg); !ok {
 		os.Mkdir(pkg, 0755)
@@ -63,36 +67,50 @@ func (xj *XJ) XMLToStruct(filename, pkg string) {
 	if ok, _ := pathExists(filename); ok {
 		if err := os.Remove(filename); err != nil {
 			log.Fatal(err)
+			return err
 		}
 	}
 
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
+		return err
 	}
 	defer file.Close()
 
 	// s := "package " + pkg + "\n\n"
 	file.WriteString("package " + pkg + "\n\n")
-	for root, snodes := range strct {
-		// s += "type " + strings.Title(root) + " struct {\n"
-		file.WriteString("type " + strings.Title(root) + " struct {\n")
-		for i := 0; i < len(snodes); i++ {
-			typ := snodes[i].Type
-			if typ != "string" {
-				typ = strings.Title(snodes[i].Type)
-			}
+	for _, strct := range strcts {
+		for root, snodes := range strct {
+			// s += "type " + strings.Title(root) + " struct {\n"
+			file.WriteString("type " + strings.Title(root) + " struct {\n")
+			for i := 0; i < len(snodes); i++ {
+				typ := snodes[i].Type
+				if typ != "string" {
+					typ = strings.Title(snodes[i].Type)
+				}
 
-			// s += "\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n"
-			file.WriteString("\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n")
+				// s += "\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n"
+				file.WriteString("\t" + strings.Title(snodes[i].Name) + "\t" + typ + "\t" + snodes[i].Tag + "\n")
+			}
+			// s += "}\n"
+			file.WriteString("}\n")
 		}
-		// s += "}\n"
-		file.WriteString("}\n")
 	}
 	file.WriteString("\n")
-	cmd := exec.Command("go", "fmt", filename)
-	if err := cmd.Run(); err != nil {
+	ft := exec.Command("go", "fmt", filename)
+	if err := ft.Run(); err != nil {
 		log.Fatal(err)
+		return err
 	}
+
+	vt := exec.Command("go", "vet", filename)
+	if err := vt.Run(); err != nil {
+		log.Fatal(err)
+		return err
+	}
+
 	// log.Println(s)
+
+	return nil
 }

@@ -1,38 +1,8 @@
 package xj2go
 
 import (
-	"strconv"
 	"strings"
 )
-
-func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode, noattr bool) {
-	// fmt.Println("path =>", path) //, "\tnode =>", node, "\tnoattr =>", noattr
-	if !noattr || node != "#text" {
-		if node != "" {
-			if path != "" && node[:1] != "[" {
-				path += "."
-			}
-			path += node
-		}
-	}
-
-	switch m.(type) {
-	case map[string]interface{}:
-		for k, v := range m.(map[string]interface{}) {
-			if noattr {
-				continue
-			}
-			xj.leafNodes(path, k, v, l, noattr)
-		}
-	case []interface{}:
-		for i, v := range m.([]interface{}) {
-			xj.leafNodes(path, "["+strconv.Itoa(i)+"]", v, l, noattr)
-		}
-	default:
-		n := leafNode{path, m}
-		*l = append(*l, n)
-	}
-}
 
 func (xj *XJ) leafPaths(lns []leafNode) []string {
 	s := []string{}
@@ -43,16 +13,20 @@ func (xj *XJ) leafPaths(lns []leafNode) []string {
 	return s
 }
 
-func (xj *XJ) leafPath(e, root string, paths []string) {
+func (xj *XJ) leafPath(e, root string, paths []string) map[string][]strctNode {
+	strct := make(map[string][]strctNode)
 	for _, path := range paths {
-		if strings.Index(path, e) == 0 {
+		sp := strings.TrimPrefix(path, e)
+		if len(sp) <= 0 || (sp[:1] != "[" && sp[:1] != ".") {
+			continue
+		}
+		if len(path) > len(e) && path[:len(e)] == e {
 			path = strings.TrimPrefix(path, e)
 			if path == "" {
 				continue
 			}
 			path = strings.TrimPrefix(path, ".")
-
-			if strings.Index(path, "[") == 0 {
+			if path[:1] == "[" {
 				path = re.ReplaceAllString(path, "")
 				path = strings.TrimPrefix(path, ".")
 			}
@@ -60,7 +34,7 @@ func (xj *XJ) leafPath(e, root string, paths []string) {
 			s := strings.Split(path, ".")
 			if len(s) >= 1 {
 				name := re.ReplaceAllString(s[0], "")
-				ek := e + "." + name //it is not same
+				ek := e + "." + name
 				if !exist[ek] {
 					if len(s) > 1 {
 						var sn strctNode
@@ -81,7 +55,7 @@ func (xj *XJ) leafPath(e, root string, paths []string) {
 						sn := strctNode{
 							Name: name,
 							Type: "string",
-							Tag:  "`xml:" + name + ",attr`",
+							Tag:  "`xml:\"" + name + ",attr\"`",
 						}
 						strct[root] = append(strct[root], sn)
 						exist[ek] = true
@@ -90,4 +64,6 @@ func (xj *XJ) leafPath(e, root string, paths []string) {
 			}
 		}
 	}
+
+	return strct
 }

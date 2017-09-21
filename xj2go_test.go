@@ -32,15 +32,16 @@ func Test_xmlToMap(t *testing.T) {
 
 func Test_XMLToStruct(t *testing.T) {
 	fs := []string{
-		"./testxml/[Content_Types].xml",
-		"./testxml/xl/workbook.xml",
-		// "./testxml/xl/styles.xml", // TODO: need validiate
-		"./testxml/xl/sharedStrings.xml",
-		"./testxml/xl/_rels/workbook.xml.rels",
+		// "./testxml/[Content_Types].xml",
+		// "./testxml/xl/workbook.xml",
+		// "./testxml/xl/sharedStrings.xml",
+		// "./testxml/xl/_rels/workbook.xml.rels",
+		// "./testxml/docProps/app.xml",
+		// "./testxml/docProps/core.xml",
+
+		"./testxml/xl/styles.xml", // TODO: need validiate
 		// "./testxml/xl/theme/theme1.xml", // TODO: need validiate
 		// "./testxml/xl/worksheets/sheet1.xml", // TODO: need validiate
-		"./testxml/docProps/app.xml",
-		// "./testxml/docProps/core.xml", // TODO: not ok
 	}
 
 	for k, v := range fs {
@@ -55,7 +56,11 @@ func Test_XMLToStruct(t *testing.T) {
 
 			pkg := "excel"
 			filename := path.Base(v)
-			xj.XMLToStruct(pkg+"/"+filename+".go", pkg)
+			err := xj.XMLToStruct(pkg+"/"+filename+".go", pkg)
+			if err != nil {
+				t.Errorf("XMLToStruct() error = %v", err)
+				return
+			}
 		})
 	}
 }
