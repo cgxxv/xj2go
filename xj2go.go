@@ -26,8 +26,9 @@ type strctNode struct {
 }
 
 var (
-	re    *regexp.Regexp
-	exist map[string]bool
+	re     *regexp.Regexp
+	exist  map[string]bool
+	strcts []map[string][]strctNode
 )
 
 // New return a xj2go instance

@@ -13,7 +13,7 @@ func (xj *XJ) pathsToNodes(paths []string) []map[string][]strctNode {
 	re = regexp.MustCompile(`\[\d+\]`)
 	exist = make(map[string]bool)
 
-	strcts := []map[string][]strctNode{}
+	strcts = []map[string][]strctNode{}
 	strct := xj.leafPath(root, root, paths)
 	strcts = append(strcts, strct)
 
@@ -22,35 +22,37 @@ func (xj *XJ) pathsToNodes(paths []string) []map[string][]strctNode {
 			es := strings.Split(e, ".")
 			root := es[len(es)-1]
 			strct := xj.leafPath(e, root, paths)
-			if strct != nil {
-				m := 0
-				for key, vals := range strct {
-					for _, stct := range strcts {
-						if _, ok := stct[key]; !ok {
-							continue
-						}
-						for j := 0; j < len(vals); j++ {
-							n := 0
-							for k := 0; k < len(stct[key]); k++ {
-								if vals[j].Name == stct[key][k].Name {
-									n++
-								}
-							}
-							if n == 0 {
-								stct[key] = append(stct[key], vals[j])
-							}
-						}
-						m++
-					}
-				}
-				if m == 0 {
-					strcts = append(strcts, strct)
-				}
-			}
+			xj.appendStrctNode(strct)
 		}
 	}
 
 	return strcts
+}
+
+func (xj *XJ) appendStrctNode(strct map[string][]strctNode) {
+	m := 0
+	for key, vals := range strct {
+		for _, stct := range strcts {
+			if _, ok := stct[key]; !ok {
+				continue
+			}
+			for j := 0; j < len(vals); j++ {
+				n := 0
+				for k := 0; k < len(stct[key]); k++ {
+					if vals[j].Name == stct[key][k].Name && vals[j].Type == stct[key][k].Type {
+						n++
+					}
+				}
+				if n == 0 {
+					stct[key] = append(stct[key], vals[j])
+				}
+			}
+			m++
+		}
+	}
+	if m == 0 {
+		strcts = append(strcts, strct)
+	}
 }
 
 func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode) {

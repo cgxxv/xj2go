@@ -46,39 +46,43 @@ func (xj *XJ) leafPath(e, root string, paths []string) map[string][]strctNode {
 				path = strings.TrimPrefix(path, ".")
 			}
 
-			s := strings.Split(path, ".")
-			if len(s) >= 1 {
-				name := re.ReplaceAllString(s[0], "")
-				ek := e + "." + name
-				if !exist[ek] {
-					if len(s) > 1 {
-						var sn strctNode
-						if re.MatchString(s[0]) {
-							sn = strctNode{
-								Name: name,
-								Type: "[]" + name,
-							}
-						} else {
-							sn = strctNode{
-								Name: name,
-								Type: name,
-							}
-						}
-						strct[root] = append(strct[root], sn)
-						exist[ek] = true
-					} else {
-						sn := strctNode{
-							Name: name,
-							Type: "string",
-							Tag:  "`xml:\"" + name + ",attr\"`",
-						}
-						strct[root] = append(strct[root], sn)
-						exist[ek] = true
-					}
-				}
-			}
+			xj.leafStrctPath(e, root, path, strct)
 		}
 	}
 
 	return strct
+}
+
+func (xj *XJ) leafStrctPath(e, root, path string, strct map[string][]strctNode) {
+	s := strings.Split(path, ".")
+	if len(s) >= 1 {
+		name := re.ReplaceAllString(s[0], "")
+		ek := e + "." + name
+		if !exist[ek] {
+			if len(s) > 1 {
+				var sn strctNode
+				if re.MatchString(s[0]) {
+					sn = strctNode{
+						Name: name,
+						Type: "[]" + name,
+					}
+				} else {
+					sn = strctNode{
+						Name: name,
+						Type: name,
+					}
+				}
+				strct[root] = append(strct[root], sn)
+				exist[ek] = true
+			} else {
+				sn := strctNode{
+					Name: name,
+					Type: "string",
+					Tag:  "`xml:\"" + name + ",attr\"`",
+				}
+				strct[root] = append(strct[root], sn)
+				exist[ek] = true
+			}
+		}
+	}
 }
