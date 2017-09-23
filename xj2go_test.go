@@ -1,7 +1,6 @@
 package xj2go
 
 import (
-	"path"
 	"testing"
 )
 
@@ -18,10 +17,13 @@ func Test_xmlToMap(t *testing.T) {
 		"./testxml/docProps/core.xml",
 	}
 
+	pkgname := "excel"
 	for k, v := range fs {
 		t.Run("xml to map"+string(k), func(t *testing.T) {
-			xj := New(v)
-			_, err := xj.xmlToMap("", nil)
+			xj := New(v, pkgname)
+			// paths, err := xj.xmlToPaths()
+			// fmt.Println(paths)
+			_, err := xj.xmlToPaths()
 			if err != nil {
 				t.Errorf("xmlToMap() error = %v", err)
 				return
@@ -43,12 +45,12 @@ func Test_XMLToStruct(t *testing.T) {
 		"./testxml/docProps/core.xml",
 	}
 
-	pkg := "excel"
+	pkgname := "excel"
 	for k, v := range fs {
 		t.Run("leaf paths "+string(k), func(t *testing.T) {
-			xj := New(v)
-			filename := path.Base(v)
-			err := xj.XMLToStruct(pkg+"/"+filename+".go", pkg)
+			// filename := pkgname + "/" + path.Base(v) + ".go"
+			xj := New(v, pkgname)
+			err := xj.XMLToStruct()
 			if err != nil {
 				t.Errorf("XMLToStruct() error = %v", err)
 				return

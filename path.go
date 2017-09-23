@@ -1,21 +1,13 @@
 package xj2go
 
 import (
+	"regexp"
 	"strings"
 )
 
-func (xj *XJ) leafPaths(lns []leafNode) []string {
-	s := []string{}
-	for i := 0; i < len(lns); i++ {
-		s = append(s, lns[i].path)
-	}
-
-	return s
-}
-
-func (xj *XJ) leafPath(e, root string, paths []string) map[string][]strctNode {
-	strct := make(map[string][]strctNode)
-	for _, path := range paths {
+func leafPath(e, root string, paths *[]string, exist *map[string]bool, re *regexp.Regexp) strctMap {
+	strct := make(strctMap)
+	for _, path := range *paths {
 		var spath string
 		if eld := strings.LastIndex(e, "."); eld > 0 {
 			elp := e[eld:] // with .
@@ -46,21 +38,21 @@ func (xj *XJ) leafPath(e, root string, paths []string) map[string][]strctNode {
 				path = strings.TrimPrefix(path, ".")
 			}
 
-			xj.leafStrctPath(e, root, path, strct)
+			leafStrctPath(e, root, path, &strct, exist, re)
 		}
 	}
 
 	return strct
 }
 
-func (xj *XJ) leafStrctPath(e, root, path string, strct map[string][]strctNode) {
+func leafStrctPath(e, root, path string, strct *strctMap, exist *map[string]bool, re *regexp.Regexp) {
 	s := strings.Split(path, ".")
 	if len(s) >= 1 {
 		name := re.ReplaceAllString(s[0], "")
 		ek := e + "." + name
-		if !exist[ek] {
+		if !(*exist)[ek] {
+			var sn strctNode
 			if len(s) > 1 {
-				var sn strctNode
 				if re.MatchString(s[0]) {
 					sn = strctNode{
 						Name: name,
@@ -72,17 +64,15 @@ func (xj *XJ) leafStrctPath(e, root, path string, strct map[string][]strctNode) 
 						Type: name,
 					}
 				}
-				strct[root] = append(strct[root], sn)
-				exist[ek] = true
 			} else {
-				sn := strctNode{
+				sn = strctNode{
 					Name: name,
 					Type: "string",
 					Tag:  "`xml:\"" + name + ",attr\"`",
 				}
-				strct[root] = append(strct[root], sn)
-				exist[ek] = true
 			}
+			(*strct)[root] = append((*strct)[root], sn)
+			(*exist)[ek] = true
 		}
 	}
 }

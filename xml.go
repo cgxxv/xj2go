@@ -4,10 +4,27 @@ import (
 	"encoding/xml"
 	"errors"
 	"io"
+	"log"
+	"os"
 	"strings"
 )
 
-func (xj *XJ) xmlToMap(sk string, attr []xml.Attr) (map[string]interface{}, error) {
+func xmlToMap(filename string) (map[string]interface{}, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	m, err := decodeXML(xml.NewDecoder(file), "", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+func decodeXML(d *xml.Decoder, sk string, attr []xml.Attr) (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 	ma := make(map[string]interface{})
 	if sk != "" {
@@ -17,7 +34,7 @@ func (xj *XJ) xmlToMap(sk string, attr []xml.Attr) (map[string]interface{}, erro
 	}
 
 	for {
-		t, err := xj.d.Token()
+		t, err := d.Token()
 		if err != nil {
 			if err != io.EOF {
 				return nil, errors.New("xml.Decoder.Token() - " + err.Error())
@@ -28,9 +45,9 @@ func (xj *XJ) xmlToMap(sk string, attr []xml.Attr) (map[string]interface{}, erro
 		case xml.StartElement:
 			tt := t.(xml.StartElement)
 			if sk == "" {
-				return xj.xmlToMap(tt.Name.Local, tt.Attr)
+				return decodeXML(d, tt.Name.Local, tt.Attr)
 			}
-			mm, err := xj.xmlToMap(tt.Name.Local, tt.Attr)
+			mm, err := decodeXML(d, tt.Name.Local, tt.Attr)
 			if err != nil {
 				return nil, err
 			}

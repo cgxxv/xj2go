@@ -1,38 +1,13 @@
 package xj2go
 
 import (
-	"regexp"
 	"strconv"
-	"strings"
 )
 
-func (xj *XJ) pathsToNodes(paths []string) []map[string][]strctNode {
-	n := max(paths)
-	root := strings.Split(paths[0], ".")[0]
-
-	re = regexp.MustCompile(`\[\d+\]`)
-	exist = make(map[string]bool)
-
-	strcts = []map[string][]strctNode{}
-	strct := xj.leafPath(root, root, paths)
-	strcts = append(strcts, strct)
-
-	for i := 0; i < n; i++ {
-		for e := range exist {
-			es := strings.Split(e, ".")
-			root := es[len(es)-1]
-			strct := xj.leafPath(e, root, paths)
-			xj.appendStrctNode(strct)
-		}
-	}
-
-	return strcts
-}
-
-func (xj *XJ) appendStrctNode(strct map[string][]strctNode) {
+func appendStrctNode(strct *strctMap, strcts *[]strctMap) {
 	m := 0
-	for key, vals := range strct {
-		for _, stct := range strcts {
+	for key, vals := range *strct {
+		for _, stct := range *strcts {
 			if _, ok := stct[key]; !ok {
 				continue
 			}
@@ -51,11 +26,11 @@ func (xj *XJ) appendStrctNode(strct map[string][]strctNode) {
 		}
 	}
 	if m == 0 {
-		strcts = append(strcts, strct)
+		*strcts = append(*strcts, *strct)
 	}
 }
 
-func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode) {
+func leafNodes(path, node string, m interface{}, l *[]leafNode) {
 	if node != "" {
 		if path != "" && node[:1] != "[" {
 			path += "."
@@ -66,11 +41,11 @@ func (xj *XJ) leafNodes(path, node string, m interface{}, l *[]leafNode) {
 	switch m.(type) {
 	case map[string]interface{}:
 		for k, v := range m.(map[string]interface{}) {
-			xj.leafNodes(path, k, v, l)
+			leafNodes(path, k, v, l)
 		}
 	case []interface{}:
 		for i, v := range m.([]interface{}) {
-			xj.leafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
+			leafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
 		}
 	default:
 		if m != nil {

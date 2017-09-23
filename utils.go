@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-func max(paths []string) int {
+func max(paths *[]string) int {
 	n := 0
-	for _, path := range paths {
+	for _, path := range *paths {
 		t := strings.Count(path, ".")
 		if n < t {
 			n = t
