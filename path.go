@@ -7,7 +7,7 @@ import (
 
 func leafPaths(m *map[string]interface{}) ([]string, error) {
 	l := []leafNode{}
-	leafNodes("", "", m, &l)
+	leafNodes("", "", *m, &l)
 
 	paths := []string{}
 	for i := 0; i < len(l); i++ {

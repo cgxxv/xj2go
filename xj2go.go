@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"log"
-	"os"
-	"path"
 )
 
 // XJ define xj2go struct
@@ -37,6 +35,12 @@ func New(xmlfile, pkgname string) *XJ {
 
 // XMLToGo convert xml to go struct and write this struct to a go file
 func (xj *XJ) XMLToGo() error {
+	filename, err := checkFile(xj.File, xj.Pkg)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
 	paths, err := xmlToPaths(xj.File)
 	if err != nil {
 		log.Fatal(err)
@@ -44,23 +48,17 @@ func (xj *XJ) XMLToGo() error {
 	}
 	strcts := pathsToStrcts(&paths)
 
-	if ok, _ := pathExists(xj.Pkg); !ok {
-		os.Mkdir(xj.Pkg, 0755)
-	}
-
-	filename := xj.Pkg + "/" + path.Base(xj.File) + ".go"
-	if ok, _ := pathExists(filename); ok {
-		if err := os.Remove(filename); err != nil {
-			log.Fatal(err)
-			return err
-		}
-	}
-
 	return writeStruct(filename, xj.Pkg, &strcts)
 }
 
-// ByteToGo convert xml to struct
-func ByteToGo(filename, pkg string, b *[]byte) error {
+// BytesToGo convert xml byte to struct
+func BytesToGo(filename, pkg string, b *[]byte) error {
+	filename, err := checkFile(filename, pkg)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
 	r := bytes.NewReader(*b)
 	m, err := decodeXML(xml.NewDecoder(r), "", nil)
 	if err != nil {

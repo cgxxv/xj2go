@@ -3,6 +3,7 @@
 .sonarlint
 .scannerwork
 excel/*
+excel2/*
 coverage.txt
 coverage.xml
 report.xml

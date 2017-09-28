@@ -1,11 +1,37 @@
 package xj2go
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 )
+
+func checkFile(filename, pkg string) (string, error) {
+	if ok, err := pathExists(pkg); !ok {
+		os.Mkdir(pkg, 0755)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	filename = path.Base(filename)
+	if filename[:1] == "." {
+		return "", errors.New("File could not start with '.'")
+	}
+
+	filename = pkg + "/" + filename + ".go"
+	if ok, _ := pathExists(filename); ok {
+		if err := os.Remove(filename); err != nil {
+			log.Fatal(err)
+			return "", err
+		}
+	}
+
+	return filename, nil
+}
 
 func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
