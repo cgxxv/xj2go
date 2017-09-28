@@ -9,6 +9,16 @@ import (
 	"strings"
 )
 
+func xmlToPaths(filename string) ([]string, error) {
+	m, err := xmlToMap(filename)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return leafPaths(&m)
+}
+
 func xmlToMap(filename string) (map[string]interface{}, error) {
 	file, err := os.Open(filename)
 	if err != nil {

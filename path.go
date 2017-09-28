@@ -5,6 +5,18 @@ import (
 	"strings"
 )
 
+func leafPaths(m *map[string]interface{}) ([]string, error) {
+	l := []leafNode{}
+	leafNodes("", "", m, &l)
+
+	paths := []string{}
+	for i := 0; i < len(l); i++ {
+		paths = append(paths, l[i].path)
+	}
+
+	return paths, nil
+}
+
 func leafPath(e, root string, paths *[]string, exist *map[string]bool, re *regexp.Regexp) strctMap {
 	strct := make(strctMap)
 	for _, path := range *paths {
@@ -75,4 +87,28 @@ func leafStrctPath(e, root, path string, strct *strctMap, exist *map[string]bool
 			(*exist)[ek] = true
 		}
 	}
+}
+
+func pathsToStrcts(paths *[]string) []strctMap {
+	n := max(paths)
+	root := strings.Split((*paths)[0], ".")[0]
+
+	re := regexp.MustCompile(`\[\d+\]`)
+	exist := make(map[string]bool)
+
+	strct := leafPath(root, root, paths, &exist, re)
+	strcts := []strctMap{}
+	strcts = append(strcts, strct)
+
+	es := []string{}
+	for i := 0; i < n; i++ {
+		for e := range exist {
+			es = strings.Split(e, ".")
+			root = es[len(es)-1]
+			strct = leafPath(e, root, paths, &exist, re)
+			appendStrctNode(&strct, &strcts)
+		}
+	}
+
+	return strcts
 }
