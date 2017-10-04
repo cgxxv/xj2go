@@ -23,7 +23,6 @@ func leafPath(e, root string, paths *[]string, exist *map[string]bool, re *regex
 		var spath string
 		if eld := strings.LastIndex(e, "."); eld > 0 {
 			elp := e[eld:] // with .
-
 			if pos := strings.Index(path, elp); pos > 0 {
 				pre := path[:pos]
 				rest := strings.TrimPrefix(path, pre)
@@ -46,7 +45,8 @@ func leafPath(e, root string, paths *[]string, exist *map[string]bool, re *regex
 			}
 			path = strings.TrimPrefix(path, ".")
 			if path[:1] == "[" {
-				path = re.ReplaceAllString(path, "")
+				loc := re.FindStringIndex(path)
+				path = strings.Replace(path, path[loc[0]:loc[1]], "", 1)
 				path = strings.TrimPrefix(path, ".")
 			}
 
@@ -69,11 +69,13 @@ func leafStrctPath(e, root, path string, strct *strctMap, exist *map[string]bool
 					sn = strctNode{
 						Name: name,
 						Type: "[]" + name,
+						Tag:  "`xml:\"" + name + "\"`",
 					}
 				} else {
 					sn = strctNode{
 						Name: name,
 						Type: name,
+						Tag:  "`xml:\"" + name + "\"`",
 					}
 				}
 			} else {

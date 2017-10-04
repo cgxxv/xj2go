@@ -24,8 +24,10 @@ func Test_xmlToPaths(t *testing.T) {
 
 	for k, v := range fs {
 		t.Run("xml to map"+string(k), func(t *testing.T) {
-			// paths, err := xj.xmlToPaths()
-			// fmt.Println(paths)
+			// paths, err := xmlToPaths(v)
+			// for k, path := range paths {
+			// 	fmt.Println(k, path)
+			// }
 			_, err := xmlToPaths(v)
 			if err != nil {
 				t.Errorf("xmlToMap() error = %v", err)
