@@ -4,6 +4,11 @@ import (
 	"strconv"
 )
 
+type leafNode struct {
+	path  string
+	value interface{}
+}
+
 func appendStrctNode(strct *strctMap, strcts *[]strctMap) {
 	m := 0
 	for key, vals := range *strct {

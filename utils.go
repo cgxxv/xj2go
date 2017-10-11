@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-func max(paths *[]string) int {
+func max(nodes *[]leafNode) int {
 	n := 0
-	for _, path := range *paths {
-		t := strings.Count(path, ".")
+	for _, node := range *nodes {
+		t := strings.Count(node.path, ".")
 		if n < t {
 			n = t
 		}

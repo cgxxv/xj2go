@@ -12,19 +12,6 @@ type XJ struct {
 	Pkg  string
 }
 
-type leafNode struct {
-	path  string
-	value interface{}
-}
-
-type strctNode struct {
-	Name string
-	Type string
-	Tag  string
-}
-
-type strctMap map[string][]strctNode
-
 // New return a xj2go instance
 func New(xmlfile, pkgname string) *XJ {
 	return &XJ{
@@ -41,12 +28,12 @@ func (xj *XJ) XMLToGo() error {
 		return err
 	}
 
-	paths, err := xmlToPaths(xj.File)
+	nodes, err := xmlToPaths(xj.File)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-	strcts := pathsToStrcts(&paths)
+	strcts := pathsToStrcts(&nodes)
 
 	return writeStruct(filename, xj.Pkg, &strcts)
 }
@@ -66,12 +53,12 @@ func BytesToGo(filename, pkg string, b *[]byte) error {
 		return err
 	}
 
-	paths, err := leafPaths(&m)
+	nodes, err := leafPaths(&m)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-	strcts := pathsToStrcts(&paths)
+	strcts := pathsToStrcts(&nodes)
 
 	return writeStruct(filename, pkg, &strcts)
 }

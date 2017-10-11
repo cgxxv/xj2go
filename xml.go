@@ -9,7 +9,12 @@ import (
 	"strings"
 )
 
-func xmlToPaths(filename string) ([]string, error) {
+type xmlVal struct {
+	val  string
+	attr bool
+}
+
+func xmlToPaths(filename string) ([]leafNode, error) {
 	m, err := xmlToMap(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -39,7 +44,7 @@ func decodeXML(d *xml.Decoder, sk string, attr []xml.Attr) (map[string]interface
 	ma := make(map[string]interface{})
 	if sk != "" {
 		for _, v := range attr {
-			ma[v.Name.Local] = v.Value
+			ma[v.Name.Local] = xmlVal{v.Value, true}
 		}
 	}
 
