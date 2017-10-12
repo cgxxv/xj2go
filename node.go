@@ -43,18 +43,18 @@ func leafNodes(path, node string, m interface{}, l *[]leafNode) {
 		path += node
 	}
 
-	switch m.(type) {
+	switch mm := m.(type) {
 	case map[string]interface{}:
-		for k, v := range m.(map[string]interface{}) {
+		for k, v := range mm {
 			leafNodes(path, k, v, l)
 		}
 	case []interface{}:
-		for i, v := range m.([]interface{}) {
+		for i, v := range mm {
 			leafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
 		}
 	default:
-		if m != nil {
-			n := leafNode{path, m}
+		if mm != nil {
+			n := leafNode{path, mm}
 			*l = append(*l, n)
 		}
 	}

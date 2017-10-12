@@ -56,13 +56,12 @@ func decodeXML(d *xml.Decoder, sk string, attr []xml.Attr) (map[string]interface
 			}
 			return nil, err
 		}
-		switch t.(type) {
+		switch element := t.(type) {
 		case xml.StartElement:
-			tt := t.(xml.StartElement)
 			if sk == "" {
-				return decodeXML(d, tt.Name.Local, tt.Attr)
+				return decodeXML(d, element.Name.Local, element.Attr)
 			}
-			mm, err := decodeXML(d, tt.Name.Local, tt.Attr)
+			mm, err := decodeXML(d, element.Name.Local, element.Attr)
 			if err != nil {
 				return nil, err
 			}
@@ -92,7 +91,7 @@ func decodeXML(d *xml.Decoder, sk string, attr []xml.Attr) (map[string]interface
 			}
 			return m, nil
 		case xml.CharData:
-			tt := strings.Trim(string(t.(xml.CharData)), "\t\r\b\n ")
+			tt := strings.Trim(string(element), "\t\r\b\n ")
 			if tt != "" {
 				if sk != "" {
 					m[sk] = tt
