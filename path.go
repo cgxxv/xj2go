@@ -13,21 +13,33 @@ type strctNode struct {
 
 type strctMap map[string][]strctNode
 
-func leafPaths(m *map[string]interface{}) ([]leafNode, error) {
-	l := []leafNode{}
-	leafNodes("", "", *m, &l)
+func leafNodesToStrcts(typ string, nodes *[]leafNode) []strctMap {
+	n := max(nodes)
+	root := strings.Split((*nodes)[0].path, ".")[0]
 
-	// paths := []string{}
-	// for i := 0; i < len(l); i++ {
-	// 	paths = append(paths, l[i].path)
-	// }
+	exist := make(map[string]bool)
 
-	return l, nil
+	strct := leafNodesToStruct(typ, root, root, nodes, &exist)
+	strcts := []strctMap{}
+	strcts = append(strcts, strct)
+
+	es := []string{}
+	for i := 0; i < n; i++ {
+		for e := range exist {
+			es = strings.Split(e, ".")
+			root = es[len(es)-1]
+			strct = leafNodesToStruct(typ, e, root, nodes, &exist)
+			appendStrctNode(&strct, &strcts)
+		}
+	}
+
+	return strcts
 }
 
-func leafPath(e, root string, nodes *[]leafNode, exist *map[string]bool, re *regexp.Regexp) strctMap {
+func leafNodesToStruct(typ, e, root string, nodes *[]leafNode, exist *map[string]bool) strctMap {
 	strct := make(strctMap)
 	var spath string
+	re := regexp.MustCompile(`\[\d+\]`)
 	for _, node := range *nodes {
 		if eld := strings.LastIndex(e, "."); eld > 0 {
 			elp := e[eld:] // with .
@@ -58,64 +70,43 @@ func leafPath(e, root string, nodes *[]leafNode, exist *map[string]bool, re *reg
 				node.path = strings.TrimPrefix(node.path, ".")
 			}
 
-			leafStrctPath(e, root, &node, &strct, exist, re)
+			leafNodeToStruct(typ, e, root, &node, &strct, exist, re)
 		}
 	}
 
 	return strct
 }
 
-func leafStrctPath(e, root string, node *leafNode, strct *strctMap, exist *map[string]bool, re *regexp.Regexp) {
+func leafNodeToStruct(typ, e, root string, node *leafNode, strct *strctMap, exist *map[string]bool, re *regexp.Regexp) {
 	s := strings.Split(node.path, ".")
 	if len(s) >= 1 {
 		name := re.ReplaceAllString(s[0], "")
 		ek := e + "." + name
+		sname := toProperCase(name)
 		if !(*exist)[ek] {
 			sn := strctNode{
-				Name: name,
+				Name: sname,
 			}
 			if len(s) > 1 {
 				if re.MatchString(s[0]) {
-					sn.Type = "[]" + name
+					sn.Type = "[]" + sname
 				} else {
-					sn.Type = name
+					sn.Type = sname
 				}
-				sn.Tag = "`xml:\"" + name + "\"`"
+				sn.Tag = "`" + typ + ":\"" + name + "\"`"
 			} else {
-				sn.Type = "string"
+				sn.Type = toProperType(node.value)
 				switch node.value.(type) {
 				case xmlVal:
-					sn.Tag = "`xml:\"" + name + ",attr\"`"
-				case string:
-					sn.Tag = "`xml:\"" + name + "\"`"
+					sn.Tag = "`" + typ + ":\"" + name + ",attr\"`"
+				// case string:
+				// sn.Tag = "`" + typ + ":\"" + name + "\"`"
+				default:
+					sn.Tag = "`" + typ + ":\"" + name + "\"`"
 				}
 			}
 			(*strct)[root] = append((*strct)[root], sn)
 			(*exist)[ek] = true
 		}
 	}
-}
-
-func pathsToStrcts(nodes *[]leafNode) []strctMap {
-	n := max(nodes)
-	root := strings.Split((*nodes)[0].path, ".")[0]
-
-	re := regexp.MustCompile(`\[\d+\]`)
-	exist := make(map[string]bool)
-
-	strct := leafPath(root, root, nodes, &exist, re)
-	strcts := []strctMap{}
-	strcts = append(strcts, strct)
-
-	es := []string{}
-	for i := 0; i < n; i++ {
-		for e := range exist {
-			es = strings.Split(e, ".")
-			root = es[len(es)-1]
-			strct = leafPath(e, root, nodes, &exist, re)
-			appendStrctNode(&strct, &strcts)
-		}
-	}
-
-	return strcts
 }

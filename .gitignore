@@ -4,6 +4,8 @@
 .scannerwork
 excel/*
 excel2/*
+xjson/*
+xjson2/*
 coverage.txt
 coverage.xml
 report.xml

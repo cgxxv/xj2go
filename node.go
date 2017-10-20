@@ -35,7 +35,33 @@ func appendStrctNode(strct *strctMap, strcts *[]strctMap) {
 	}
 }
 
-func leafNodes(path, node string, m interface{}, l *[]leafNode) {
+func leafNodes(m *map[string]interface{}) ([]leafNode, error) {
+	l := []leafNode{}
+	getLeafNodes("", "", *m, &l)
+
+	// paths := []string{}
+	// for i := 0; i < len(l); i++ {
+	// 	paths = append(paths, l[i].path)
+	// }
+
+	return l, nil
+}
+
+func reLeafNodes(lns *[]leafNode, prefix string) ([]leafNode, error) {
+	ls := []leafNode{}
+	var l leafNode
+	for _, ln := range *lns {
+		l = leafNode{
+			path:  prefix + "." + ln.path,
+			value: ln.value,
+		}
+		ls = append(ls, l)
+	}
+
+	return ls, nil
+}
+
+func getLeafNodes(path, node string, m interface{}, l *[]leafNode) {
 	if node != "" {
 		if path != "" && node[:1] != "[" {
 			path += "."
@@ -46,11 +72,11 @@ func leafNodes(path, node string, m interface{}, l *[]leafNode) {
 	switch mm := m.(type) {
 	case map[string]interface{}:
 		for k, v := range mm {
-			leafNodes(path, k, v, l)
+			getLeafNodes(path, k, v, l)
 		}
 	case []interface{}:
 		for i, v := range mm {
-			leafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
+			getLeafNodes(path, "["+strconv.Itoa(i)+"]", v, l)
 		}
 	default:
 		if mm != nil {

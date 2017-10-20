@@ -10,13 +10,15 @@ import (
 type XJ struct {
 	File string
 	Pkg  string
+	Root string
 }
 
 // New return a xj2go instance
-func New(xmlfile, pkgname string) *XJ {
+func New(xmlfile, pkgname, root string) *XJ {
 	return &XJ{
 		File: xmlfile,
 		Pkg:  pkgname,
+		Root: root,
 	}
 }
 
@@ -28,18 +30,18 @@ func (xj *XJ) XMLToGo() error {
 		return err
 	}
 
-	nodes, err := xmlToPaths(xj.File)
+	nodes, err := xmlToLeafNodes(xj.File)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-	strcts := pathsToStrcts(&nodes)
+	strcts := leafNodesToStrcts("xml", &nodes)
 
 	return writeStruct(filename, xj.Pkg, &strcts)
 }
 
-// BytesToGo convert xml byte to struct
-func BytesToGo(filename, pkg string, b *[]byte) error {
+// XMLBytesToGo convert xml byte to struct
+func XMLBytesToGo(filename, pkg string, b *[]byte) error {
 	filename, err := checkFile(filename, pkg)
 	if err != nil {
 		log.Fatal(err)
@@ -53,12 +55,59 @@ func BytesToGo(filename, pkg string, b *[]byte) error {
 		return err
 	}
 
-	nodes, err := leafPaths(&m)
+	nodes, err := leafNodes(&m)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-	strcts := pathsToStrcts(&nodes)
+	strcts := leafNodesToStrcts("xml", &nodes)
+
+	return writeStruct(filename, pkg, &strcts)
+}
+
+func (xj *XJ) JSONToGo() error {
+	filename, err := checkFile(xj.File, xj.Pkg)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	nodes, err := jsonToLeafNodes(xj.Root, xj.File)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	strcts := leafNodesToStrcts("json", &nodes)
+
+	return writeStruct(filename, xj.Pkg, &strcts)
+}
+
+func JSONBytesToGo(filename, pkg, root string, b *[]byte) error {
+	filename, err := checkFile(filename, pkg)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	m, err := jsonBytesToMap(pkg, root, b)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	ns, err := leafNodes(&m)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	nodes, err := reLeafNodes(&ns, root)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	strcts := leafNodesToStrcts("json", &nodes)
 
 	return writeStruct(filename, pkg, &strcts)
 }

@@ -42,21 +42,30 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 
 	defer file.Close()
 
-	file.WriteString("package " + pkg + "\n\n")
+	pkgLines := make(map[string]string)
+	strctLines := []string{}
 	for _, strct := range *strcts {
 		for root, sns := range strct {
-			file.WriteString("type " + strings.Title(root) + " struct {\n")
+			strctLines = append(strctLines, "type "+strings.Title(root)+" struct {\n")
 			for i := 0; i < len(sns); i++ {
-				if sns[i].Type != "string" {
-					file.WriteString("\t" + strings.Title(sns[i].Name) + "\t" + strings.Title(sns[i].Type) + "\t" + sns[i].Tag + "\n")
-				} else {
-					file.WriteString("\t" + strings.Title(sns[i].Name) + "\t" + sns[i].Type + "\t" + sns[i].Tag + "\n")
+				if sns[i].Type == "time.Time" {
+					pkgLines["time.Time"] = "import \"time\"\n"
 				}
+				strctLines = append(strctLines, "\t"+strings.Title(sns[i].Name)+"\t"+sns[i].Type+"\t"+sns[i].Tag+"\n")
 			}
-			file.WriteString("}\n")
+			strctLines = append(strctLines, "}\n")
 		}
 	}
-	file.WriteString("\n")
+	strctLines = append(strctLines, "\n")
+
+	file.WriteString("package " + pkg + "\n\n")
+	for _, pl := range pkgLines {
+		file.WriteString(pl)
+	}
+	for _, sl := range strctLines {
+		file.WriteString(sl)
+	}
+
 	ft := exec.Command("go", "fmt", filename)
 	if err := ft.Run(); err != nil {
 		log.Fatal(err)

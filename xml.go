@@ -14,14 +14,14 @@ type xmlVal struct {
 	attr bool
 }
 
-func xmlToPaths(filename string) ([]leafNode, error) {
+func xmlToLeafNodes(filename string) ([]leafNode, error) {
 	m, err := xmlToMap(filename)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 
-	return leafPaths(&m)
+	return leafNodes(&m)
 }
 
 func xmlToMap(filename string) (map[string]interface{}, error) {
