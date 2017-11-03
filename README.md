@@ -4,78 +4,56 @@
 
 The goal is to convert xml or json file to go struct file.
 
-## usage
+## Usage
 
-### convert xml
-
-1. convert xml file to go struct
-
-```go
-package main
-
-import "github.com/stackerzzq/xj2go"
-
-func main() {
-  filename := "./testxml/xl/styles.xml"
-  xj := xj2go.New("test.go", "demoxml")
-  xj.XMLToGo()
-}
+Download and install it:
+```sh
+$ go get -u -v github.com/stackerzzq/xj2go
 ```
-
-2. convert xml bytes to go struct
-
+Import it in your code:
 ```go
-package main
-
-import "ioutil"
 import "github.com/stackerzzq/xj2go"
-
-func main() {
-  filename := "./testxml/xl/styles.xml"
-  b, err := ioutil.ReadFile(filename)
-  if err != nil {
-    log.Fatal(err)
-  }
-
-  if err := xj2go.XMLBytesToGo("test.go", "demoxml2", &b); err != nil {
-    log.Fatal(err)
-  }
-}
 ```
+## Example
 
-### convert json
+Please see [the example file](example/sample.go).
 
-1. convert json file to go struct
-
+[embedmd]:# (example/sample.go go)
 ```go
 package main
 
-import "github.com/stackerzzq/xj2go"
+import (
+	"io/ioutil"
+	"log"
+
+	"github.com/stackerzzq/xj2go"
+)
 
 func main() {
-  filename := "./testjson/githubAPI.json"
-  xj := xj2go.New("github.go", "demojson")
-  xj.JSONToGo()
-}
-```
+	xmlfilename := "../testxml/xl/styles.xml"
+	xj1 := xj2go.New("test.go", "demoxml", "")
+	xj1.XMLToGo()
 
-2. convert json bytes to go struct
+	b1, err := ioutil.ReadFile(xmlfilename)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-```go
-package main
+	if err := xj2go.XMLBytesToGo("test.go", "demoxml2", &b1); err != nil {
+		log.Fatal(err)
+	}
 
-import "ioutil"
-import "github.com/stackerzzq/xj2go"
+	jsonfilename := "../testjson/githubAPI.json"
+	xj2 := xj2go.New("github.go", "demojson", "sample")
+	xj2.JSONToGo()
 
-func main() {
-  filename := "./testjson/githubAPI.json"
-  b, err := ioutil.ReadFile(filename)
-  if err != nil {
-    log.Fatal(err)
-  }
+	b2, err := ioutil.ReadFile(jsonfilename)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-  if err := xj2go.JSONBytesToGo("test.go", "demojson2", "github", &b); err != nil {
-    log.Fatal(err)
-  }
+	if err := xj2go.JSONBytesToGo("test.go", "demojson2", "github", &b2); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
