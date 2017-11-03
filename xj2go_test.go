@@ -24,11 +24,7 @@ func Test_xmlToPaths(t *testing.T) {
 	}
 
 	for k, v := range fs {
-		t.Run("xml to map"+string(k), func(t *testing.T) {
-			// paths, err := xmlToLeafNodes(v)
-			// for k, path := range paths {
-			// 	fmt.Println(k, path)
-			// }
+		t.Run("xml to paths"+string(k), func(t *testing.T) {
 			_, err := xmlToLeafNodes(v)
 			if err != nil {
 				t.Errorf("xmlToMap() error = %v", err)
@@ -54,7 +50,6 @@ func Test_XMLToGo(t *testing.T) {
 	pkgname := "excel"
 	for k, v := range fs {
 		t.Run("xml to go "+string(k), func(t *testing.T) {
-			// filename := pkgname + "/" + path.Base(v) + ".go"
 			xj := New(v, pkgname, "")
 			err := xj.XMLToGo()
 			if err != nil {
@@ -127,7 +122,7 @@ func Test_JSONBytesToGo(t *testing.T) {
 
 	pkgname := "xjson2"
 	for k, v := range fs {
-		t.Run("json to go "+string(k), func(t *testing.T) {
+		t.Run("json bytes to go "+string(k), func(t *testing.T) {
 			root := strings.TrimSuffix(path.Base(v), path.Ext(v))
 			b, err := ioutil.ReadFile(v)
 			if err != nil {

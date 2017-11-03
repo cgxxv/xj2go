@@ -51,7 +51,7 @@ func Test_pathExists(t *testing.T) {
 			name:    "not existed directory",
 			path:    "./temp",
 			want:    false,
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:    "existed directory",

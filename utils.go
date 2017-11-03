@@ -1,7 +1,6 @@
 package xj2go
 
 import (
-	"errors"
 	"os"
 	"reflect"
 	"regexp"
@@ -66,7 +65,7 @@ func pathExists(path string) (bool, error) {
 		return true, nil
 	}
 	if os.IsNotExist(err) {
-		return false, errors.New("not exists")
+		return false, nil
 	}
 	return false, err
 }
