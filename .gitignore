@@ -9,5 +9,5 @@ xjson2/*
 coverage.txt
 coverage.xml
 report.xml
-test.xml
+/test.xml
 sonar-project.properties

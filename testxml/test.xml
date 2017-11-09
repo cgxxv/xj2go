@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DomainDNSGetListResult Domain="domain.com" IsUsingOurDNS="true">
+  <Nameserver>dns1.domain.com</Nameserver>
+  <Nameserver>dns2.domain.com</Nameserver>
+</DomainDNSGetListResult>
