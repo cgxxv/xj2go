@@ -8,41 +8,44 @@ import (
 
 // XJ define xj2go struct
 type XJ struct {
-	File string
-	Pkg  string
-	Root string
+	// xml or json file
+	Filepath string
+	// the pkg name for struct
+	Pkgname string
+	// the root name for json bytes
+	Rootname string
 }
 
 // New return a xj2go instance
-func New(xmlfile, pkgname, root string) *XJ {
+func New(filepath, pkgname, rootname string) *XJ {
 	return &XJ{
-		File: xmlfile,
-		Pkg:  pkgname,
-		Root: root,
+		Filepath: filepath,
+		Pkgname:  pkgname,
+		Rootname: rootname,
 	}
 }
 
-// XMLToGo convert xml to go struct and write this struct to a go file
+// XMLToGo convert xml to go struct, then write this struct to a go file
 func (xj *XJ) XMLToGo() error {
-	filename, err := checkFile(xj.File, xj.Pkg)
+	filename, err := checkFile(xj.Filepath, xj.Pkgname)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	nodes, err := xmlToLeafNodes(xj.File)
+	nodes, err := xmlToLeafNodes(xj.Filepath)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
 	strcts := leafNodesToStrcts("xml", &nodes)
 
-	return writeStruct(filename, xj.Pkg, &strcts)
+	return writeStruct(filename, xj.Pkgname, &strcts)
 }
 
-// XMLBytesToGo convert xml byte to struct
-func XMLBytesToGo(filename, pkg string, b *[]byte) error {
-	filename, err := checkFile(filename, pkg)
+// XMLBytesToGo convert xml bytes to struct, then the struct will be writed to ./{pkg}/{filename}.go
+func XMLBytesToGo(filename, pkgname string, b *[]byte) error {
+	filename, err := checkFile(filename, pkgname)
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -62,34 +65,36 @@ func XMLBytesToGo(filename, pkg string, b *[]byte) error {
 	}
 	strcts := leafNodesToStrcts("xml", &nodes)
 
-	return writeStruct(filename, pkg, &strcts)
+	return writeStruct(filename, pkgname, &strcts)
 }
 
+// JSONToGo convert json to go struct, then write this struct to a go file
 func (xj *XJ) JSONToGo() error {
-	filename, err := checkFile(xj.File, xj.Pkg)
+	filename, err := checkFile(xj.Filepath, xj.Pkgname)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	nodes, err := jsonToLeafNodes(xj.Root, xj.File)
+	nodes, err := jsonToLeafNodes(xj.Rootname, xj.Filepath)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
 	strcts := leafNodesToStrcts("json", &nodes)
 
-	return writeStruct(filename, xj.Pkg, &strcts)
+	return writeStruct(filename, xj.Pkgname, &strcts)
 }
 
-func JSONBytesToGo(filename, pkg, root string, b *[]byte) error {
-	filename, err := checkFile(filename, pkg)
+// JSONBytesToGo convert json bytes to struct, then the struct will be writed to ./{pkg}/{filename}.go
+func JSONBytesToGo(filename, pkgname, rootname string, b *[]byte) error {
+	filename, err := checkFile(filename, pkgname)
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	m, err := jsonBytesToMap(pkg, root, b)
+	m, err := jsonBytesToMap(pkgname, rootname, b)
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -101,7 +106,7 @@ func JSONBytesToGo(filename, pkg, root string, b *[]byte) error {
 		return err
 	}
 
-	nodes, err := reLeafNodes(&ns, root)
+	nodes, err := reLeafNodes(&ns, rootname)
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -109,5 +114,5 @@ func JSONBytesToGo(filename, pkg, root string, b *[]byte) error {
 
 	strcts := leafNodesToStrcts("json", &nodes)
 
-	return writeStruct(filename, pkg, &strcts)
+	return writeStruct(filename, pkgname, &strcts)
 }

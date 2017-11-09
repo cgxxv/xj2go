@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := xj2go.XMLBytesToGo("test.go", "demoxml2", &b1); err != nil {
+	if err := xj2go.XMLBytesToGo("test", "demoxml2", &b1); err != nil {
 		log.Fatal(err)
 	}
 
@@ -30,7 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := xj2go.JSONBytesToGo("test.go", "demojson2", "github", &b2); err != nil {
+	if err := xj2go.JSONBytesToGo("test", "demojson2", "github", &b2); err != nil {
 		log.Fatal(err)
 	}
 }
