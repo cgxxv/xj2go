@@ -21,6 +21,7 @@ func Test_xmlToPaths(t *testing.T) {
 		"./testxml/xl/worksheets/sheet1.xml",
 		"./testxml/docProps/app.xml",
 		"./testxml/docProps/core.xml",
+		"./testxml/test.xml",
 	}
 
 	for k, v := range fs {
@@ -45,6 +46,7 @@ func Test_XMLToGo(t *testing.T) {
 		"./testxml/xl/worksheets/sheet1.xml",
 		"./testxml/docProps/app.xml",
 		"./testxml/docProps/core.xml",
+		"./testxml/test.xml",
 	}
 
 	pkgname := "excel"

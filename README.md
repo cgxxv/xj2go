@@ -31,7 +31,7 @@ import (
 
 func main() {
 	xmlfilename := "../testxml/xl/styles.xml"
-	xj1 := xj2go.New("test.go", "demoxml", "")
+	xj1 := xj2go.New(xmlfilename, "demoxml", "")
 	xj1.XMLToGo()
 
 	b1, err := ioutil.ReadFile(xmlfilename)
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	jsonfilename := "../testjson/githubAPI.json"
-	xj2 := xj2go.New("github.go", "demojson", "sample")
+	xj2 := xj2go.New(jsonfilename, "demojson", "sample")
 	xj2.JSONToGo()
 
 	b2, err := ioutil.ReadFile(jsonfilename)

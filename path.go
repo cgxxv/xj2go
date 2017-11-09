@@ -70,7 +70,9 @@ func leafNodesToStruct(typ, e, root string, nodes *[]leafNode, exist *map[string
 				node.path = strings.TrimPrefix(node.path, ".")
 			}
 
-			leafNodeToStruct(typ, e, root, &node, &strct, exist, re)
+			if node.path != "" {
+				leafNodeToStruct(typ, e, root, &node, &strct, exist, re)
+			}
 		}
 	}
 
@@ -87,24 +89,46 @@ func leafNodeToStruct(typ, e, root string, node *leafNode, strct *strctMap, exis
 			sn := strctNode{
 				Name: sname,
 			}
-			if len(s) > 1 {
-				if re.MatchString(s[0]) {
+			if re.MatchString(s[0]) {
+				if len(s) > 1 {
 					sn.Type = "[]" + sname
 				} else {
-					sn.Type = sname
+					sn.Type = "[]" + toProperType(node.value)
 				}
-				sn.Tag = "`" + typ + ":\"" + name + "\"`"
 			} else {
-				sn.Type = toProperType(node.value)
-				switch node.value.(type) {
-				case xmlVal:
-					sn.Tag = "`" + typ + ":\"" + name + ",attr\"`"
-				// case string:
-				// sn.Tag = "`" + typ + ":\"" + name + "\"`"
-				default:
-					sn.Tag = "`" + typ + ":\"" + name + "\"`"
+				if len(s) > 1 {
+					sn.Type = sname
+				} else {
+					sn.Type = toProperType(node.value)
 				}
 			}
+			switch node.value.(type) {
+			case xmlVal:
+				sn.Tag = "`" + typ + ":\"" + name + ",attr\"`"
+			default:
+				sn.Tag = "`" + typ + ":\"" + name + "\"`"
+			}
+
+			/*
+				if len(s) > 1 {
+					if re.MatchString(s[0]) {
+						sn.Type = "[]" + sname
+					} else {
+						sn.Type = sname
+					}
+					sn.Tag = "`" + typ + ":\"" + name + "\"`"
+				} else {
+					sn.Type = toProperType(node.value)
+					switch node.value.(type) {
+					case xmlVal:
+						sn.Tag = "`" + typ + ":\"" + name + ",attr\"`"
+					// case string:
+					// sn.Tag = "`" + typ + ":\"" + name + "\"`"
+					default:
+						sn.Tag = "`" + typ + ":\"" + name + "\"`"
+					}
+				}
+			*/
 			(*strct)[root] = append((*strct)[root], sn)
 			(*exist)[ek] = true
 		}
