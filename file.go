@@ -35,12 +35,11 @@ func checkFile(filename, pkg string) (string, error) {
 
 func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	defer file.Close()
 	if err != nil {
 		log.Fatal(err)
 		return err
 	}
-
-	defer file.Close()
 
 	pkgLines := make(map[string]string)
 	strctLines := []string{}
