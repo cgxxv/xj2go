@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"strings"
 )
 
 func checkFile(filename, pkg string) (string, error) {
@@ -45,12 +44,12 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 	strctLines := []string{}
 	for _, strct := range *strcts {
 		for root, sns := range strct {
-			strctLines = append(strctLines, "type "+strings.Title(root)+" struct {\n")
+			strctLines = append(strctLines, "type "+toProperCase(root)+" struct {\n")
 			for i := 0; i < len(sns); i++ {
 				if sns[i].Type == "time.Time" {
 					pkgLines["time.Time"] = "import \"time\"\n"
 				}
-				strctLines = append(strctLines, "\t"+strings.Title(sns[i].Name)+"\t"+sns[i].Type+"\t"+sns[i].Tag+"\n")
+				strctLines = append(strctLines, "\t"+toProperCase(sns[i].Name)+"\t"+sns[i].Type+"\t"+sns[i].Tag+"\n")
 			}
 			strctLines = append(strctLines, "}\n")
 		}
