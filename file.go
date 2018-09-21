@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"sort"
 )
 
 func checkFile(filename, pkg string) (string, error) {
@@ -44,6 +45,7 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 	strctLines := []string{}
 	for _, strct := range *strcts {
 		for root, sns := range strct {
+			sort.Sort(byName(sns))
 			strctLines = append(strctLines, "type "+toProperCase(root)+" struct {\n")
 			for i := 0; i < len(sns); i++ {
 				if sns[i].Type == "time.Time" {
