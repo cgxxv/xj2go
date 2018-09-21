@@ -43,10 +43,24 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 
 	pkgLines := make(map[string]string)
 	strctLines := []string{}
+
+	var roots []string
+	strctsMap := make(map[string]strctMap)
+
 	for _, strct := range *strcts {
-		for root, sns := range strct {
+		for root, _ := range strct {
+			roots = append(roots, root)
+			strctsMap[root] = strct
+		}
+	}
+
+	sort.Strings(roots)
+
+	for _, root := range roots {
+		strct := strctsMap[root]
+		for r, sns := range strct {
 			sort.Sort(byName(sns))
-			strctLines = append(strctLines, "type "+toProperCase(root)+" struct {\n")
+			strctLines = append(strctLines, "type "+toProperCase(r)+" struct {\n")
 			for i := 0; i < len(sns); i++ {
 				if sns[i].Type == "time.Time" {
 					pkgLines["time.Time"] = "import \"time\"\n"
@@ -56,6 +70,7 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 			strctLines = append(strctLines, "}\n")
 		}
 	}
+
 	strctLines = append(strctLines, "\n")
 
 	file.WriteString("package " + pkg + "\n\n")
