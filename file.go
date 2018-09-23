@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path"
 	"sort"
+	"regexp"
 )
 
 func checkFile(filename, pkg string) (string, error) {
@@ -34,6 +35,9 @@ func checkFile(filename, pkg string) (string, error) {
 }
 
 func writeStruct(filename, pkg string, strcts *[]strctMap) error {
+	re := regexp.MustCompile("\\[|\\]")
+	filename = re.ReplaceAllString(filename, "")
+
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer file.Close()
 	if err != nil {
