@@ -11,6 +11,13 @@ type strctNode struct {
 	Tag  string
 }
 
+// sort.Interface implementation
+type byName []strctNode
+
+func (a byName) Len() int           { return len(a) }
+func (a byName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a byName) Less(i, j int) bool { return strings.Compare(a[i].Name, a[j].Name) < 0 }
+
 type strctMap map[string][]strctNode
 
 func leafNodesToStrcts(typ string, nodes *[]leafNode) []strctMap {
