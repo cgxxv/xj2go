@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// https://github.com/golang/lint/blob/39d15d55e9777df34cdffde4f406ab27fd2e60c0/lint.go#L695-L731
 var commonInitialisms = map[string]bool{
 	"API":   true,
 	"ASCII": true,
@@ -70,7 +71,6 @@ func pathExists(path string) (bool, error) {
 
 var toProperCaseRE = regexp.MustCompile(`([A-Z])([a-z]+)`)
 
-// https://github.com/golang/lint/blob/39d15d55e9777df34cdffde4f406ab27fd2e60c0/lint.go#L695-L731
 func toProperCase(str string) string {
 	subProperCase := func(v string) string {
 		if commonInitialisms[strings.ToTitle(v)] {
