@@ -45,8 +45,6 @@ var commonInitialisms = map[string]bool{
 	"XSS":   true,
 }
 
-var re *regexp.Regexp
-
 func max(nodes *[]leafNode) int {
 	n := 0
 	for _, node := range *nodes {
