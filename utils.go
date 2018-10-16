@@ -71,7 +71,16 @@ func pathExists(path string) (bool, error) {
 
 var toProperCaseRE = regexp.MustCompile(`([A-Z])([a-z]+)`)
 
+var toProperCaseCache = make(map[string]string)
+
 func toProperCase(str string) string {
+
+	// Check if already cached
+	cached, found := toProperCaseCache[str]
+	if found {
+		return cached
+	}
+
 	subProperCase := func(v string) string {
 		if commonInitialisms[strings.ToTitle(v)] {
 			v = strings.ToTitle(v)
@@ -81,14 +90,18 @@ func toProperCase(str string) string {
 
 		return v
 	}
-	str = toProperCaseRE.ReplaceAllStringFunc(str, subProperCase)
-	s := strings.Split(str, "_")
-	str = ""
+	replaced := toProperCaseRE.ReplaceAllStringFunc(str, subProperCase)
+	s := strings.Split(replaced, "_")
+
+	result := ""
 	for _, v := range s {
-		str += subProperCase(v)
+		result += subProperCase(v)
 	}
 
-	return str
+	// Keep in cache for future call
+	toProperCaseCache[str] = result
+
+	return result
 }
 
 var toProperTypeRE = regexp.MustCompile(`\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(\+\d\d:\d\d|Z)`)
