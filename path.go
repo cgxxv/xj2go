@@ -43,10 +43,12 @@ func leafNodesToStrcts(typ string, nodes *[]leafNode) []strctMap {
 	return strcts
 }
 
+var leafNodesToStructRE = regexp.MustCompile(`\[\d+\]`)
+
 func leafNodesToStruct(typ, e, root string, nodes *[]leafNode, exist *map[string]bool) strctMap {
 	strct := make(strctMap)
 	var spath string
-	re := regexp.MustCompile(`\[\d+\]`)
+	re := leafNodesToStructRE
 	for _, node := range *nodes {
 		if eld := strings.LastIndex(e, "."); eld > 0 {
 			elp := e[eld:] // with .

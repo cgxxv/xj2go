@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// https://github.com/golang/lint/blob/39d15d55e9777df34cdffde4f406ab27fd2e60c0/lint.go#L695-L731
 var commonInitialisms = map[string]bool{
 	"API":   true,
 	"ASCII": true,
@@ -45,8 +46,6 @@ var commonInitialisms = map[string]bool{
 	"XSS":   true,
 }
 
-var re *regexp.Regexp
-
 func max(nodes *[]leafNode) int {
 	n := 0
 	for _, node := range *nodes {
@@ -70,9 +69,18 @@ func pathExists(path string) (bool, error) {
 	return false, err
 }
 
-// https://github.com/golang/lint/blob/39d15d55e9777df34cdffde4f406ab27fd2e60c0/lint.go#L695-L731
+var toProperCaseRE = regexp.MustCompile(`([A-Z])([a-z]+)`)
+
+var toProperCaseCache = make(map[string]string)
+
 func toProperCase(str string) string {
-	re = regexp.MustCompile(`([A-Z])([a-z]+)`)
+
+	// Check if already cached
+	cached, found := toProperCaseCache[str]
+	if found {
+		return cached
+	}
+
 	subProperCase := func(v string) string {
 		if commonInitialisms[strings.ToTitle(v)] {
 			v = strings.ToTitle(v)
@@ -82,22 +90,27 @@ func toProperCase(str string) string {
 
 		return v
 	}
-	str = re.ReplaceAllStringFunc(str, subProperCase)
-	s := strings.Split(str, "_")
-	str = ""
+	replaced := toProperCaseRE.ReplaceAllStringFunc(str, subProperCase)
+	s := strings.Split(replaced, "_")
+
+	result := ""
 	for _, v := range s {
-		str += subProperCase(v)
+		result += subProperCase(v)
 	}
 
-	return str
+	// Keep in cache for future call
+	toProperCaseCache[str] = result
+
+	return result
 }
+
+var toProperTypeRE = regexp.MustCompile(`\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(\+\d\d:\d\d|Z)`)
 
 //TODO: should be optimize for time type
 func toProperType(v interface{}) string {
 	t := reflect.TypeOf(v)
 	if t.Kind() == reflect.String {
-		re = regexp.MustCompile(`\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(\+\d\d:\d\d|Z)`)
-		if re.MatchString(v.(string)) {
+		if toProperTypeRE.MatchString(v.(string)) {
 			return "time.Time"
 		}
 	}
