@@ -20,7 +20,7 @@ func jsonToLeafNodes(root, filename string) ([]leafNode, error) {
 		return nil, err
 	}
 
-	return reLeafNodes(&lns, root)
+	return reLeafNodes(lns, root)
 }
 
 func jsonFileToMap(top, filename string) (map[string]interface{}, error) {

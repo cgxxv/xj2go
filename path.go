@@ -20,9 +20,9 @@ func (a byName) Less(i, j int) bool { return strings.Compare(a[i].Name, a[j].Nam
 
 type strctMap map[string][]strctNode
 
-func leafNodesToStrcts(typ string, nodes *[]leafNode) []strctMap {
+func leafNodesToStrcts(typ string, nodes []leafNode) []strctMap {
 	n := max(nodes)
-	root := strings.Split((*nodes)[0].path, ".")[0]
+	root := strings.Split((nodes)[0].path, ".")[0]
 
 	exist := make(map[string]bool)
 
@@ -45,11 +45,11 @@ func leafNodesToStrcts(typ string, nodes *[]leafNode) []strctMap {
 
 var leafNodesToStructRE = regexp.MustCompile(`\[\d+\]`)
 
-func leafNodesToStruct(typ, e, root string, nodes *[]leafNode, exist *map[string]bool) strctMap {
+func leafNodesToStruct(typ, e, root string, nodes []leafNode, exist *map[string]bool) strctMap {
 	strct := make(strctMap)
 	var spath string
 	re := leafNodesToStructRE
-	for _, node := range *nodes {
+	for _, node := range nodes {
 		if eld := strings.LastIndex(e, "."); eld > 0 {
 			elp := e[eld:] // with .
 			if pos := strings.Index(node.path, elp); pos > 0 {

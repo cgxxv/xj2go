@@ -47,10 +47,10 @@ func leafNodes(m *map[string]interface{}) ([]leafNode, error) {
 	return l, nil
 }
 
-func reLeafNodes(lns *[]leafNode, prefix string) ([]leafNode, error) {
+func reLeafNodes(lns []leafNode, prefix string) ([]leafNode, error) {
 	ls := []leafNode{}
 	var l leafNode
-	for _, ln := range *lns {
+	for _, ln := range lns {
 		l = leafNode{
 			path:  prefix + "." + ln.path,
 			value: ln.value,

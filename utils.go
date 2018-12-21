@@ -46,9 +46,9 @@ var commonInitialisms = map[string]bool{
 	"XSS":   true,
 }
 
-func max(nodes *[]leafNode) int {
+func max(nodes []leafNode) int {
 	n := 0
-	for _, node := range *nodes {
+	for _, node := range nodes {
 		t := strings.Count(node.path, ".")
 		if n < t {
 			n = t

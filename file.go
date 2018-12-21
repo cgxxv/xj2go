@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"sort"
 	"regexp"
+	"sort"
 )
 
 func checkFile(filename, pkg string) (string, error) {
@@ -34,7 +34,7 @@ func checkFile(filename, pkg string) (string, error) {
 	return filename, nil
 }
 
-func writeStruct(filename, pkg string, strcts *[]strctMap) error {
+func writeStruct(filename, pkg string, strcts []strctMap) error {
 	re := regexp.MustCompile("\\[|\\]")
 	filename = re.ReplaceAllString(filename, "")
 
@@ -51,7 +51,7 @@ func writeStruct(filename, pkg string, strcts *[]strctMap) error {
 	var roots []string
 	strctsMap := make(map[string]strctMap)
 
-	for _, strct := range *strcts {
+	for _, strct := range strcts {
 		for root, _ := range strct {
 			roots = append(roots, root)
 			strctsMap[root] = strct

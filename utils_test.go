@@ -6,7 +6,7 @@ import (
 
 func Test_max(t *testing.T) {
 	type args struct {
-		nodes *[]leafNode
+		nodes []leafNode
 	}
 	tests := []struct {
 		name string
@@ -16,7 +16,7 @@ func Test_max(t *testing.T) {
 		{
 			name: "max test",
 			args: args{
-				nodes: &[]leafNode{
+				nodes: []leafNode{
 					{
 						path: "a.b.c.d.e.f.g.h",
 					},
