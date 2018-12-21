@@ -52,7 +52,7 @@ func writeStruct(filename, pkg string, strcts []strctMap) error {
 	strctsMap := make(map[string]strctMap)
 
 	for _, strct := range strcts {
-		for root, _ := range strct {
+		for root := range strct {
 			roots = append(roots, root)
 			strctsMap[root] = strct
 		}
