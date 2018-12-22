@@ -58,7 +58,7 @@ func XMLBytesToGo(filename, pkgname string, b *[]byte) error {
 		return err
 	}
 
-	nodes, err := leafNodes(&m)
+	nodes, err := leafNodes(m)
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -100,7 +100,7 @@ func JSONBytesToGo(filename, pkgname, rootname string, b *[]byte) error {
 		return err
 	}
 
-	ns, err := leafNodes(&m)
+	ns, err := leafNodes(m)
 	if err != nil {
 		log.Fatal(err)
 		return err

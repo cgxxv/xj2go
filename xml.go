@@ -21,7 +21,7 @@ func xmlToLeafNodes(filename string) ([]leafNode, error) {
 		return nil, err
 	}
 
-	return leafNodes(&m)
+	return leafNodes(m)
 }
 
 func xmlToMap(filename string) (map[string]interface{}, error) {

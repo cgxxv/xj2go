@@ -14,7 +14,7 @@ func jsonToLeafNodes(root, filename string) ([]leafNode, error) {
 		return nil, err
 	}
 
-	lns, err := leafNodes(&m)
+	lns, err := leafNodes(m)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err

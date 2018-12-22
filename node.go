@@ -35,9 +35,9 @@ func appendStrctNode(strct *strctMap, strcts *[]strctMap) {
 	}
 }
 
-func leafNodes(m *map[string]interface{}) ([]leafNode, error) {
+func leafNodes(m map[string]interface{}) ([]leafNode, error) {
 	l := []leafNode{}
-	getLeafNodes("", "", *m, &l)
+	getLeafNodes("", "", m, &l)
 
 	// paths := []string{}
 	// for i := 0; i < len(l); i++ {
