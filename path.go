@@ -92,7 +92,7 @@ func leafNodeToStruct(typ, e, root string, node *leafNode, strct *strctMap, exis
 	s := strings.Split(node.path, ".")
 	if len(s) >= 1 {
 		name := re.ReplaceAllString(s[0], "")
-		ek := e + "." + name
+		ek := string(append(append([]rune(e), []rune(".")...), []rune(name)...))
 		sname := toProperCase(name)
 		if !(*exist)[ek] {
 			sn := strctNode{

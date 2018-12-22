@@ -1,0 +1,7 @@
+<A>
+    <B>some text...</B>
+    <C ID="1">some text...</C>
+    <D ID="2">
+        <E>some text...</E>
+    </D>
+</A>
