@@ -9,6 +9,8 @@ The goal is to convert xml or json file to go struct file.
 Download and install it:
 ```sh
 $ go get -u -v github.com/stackerzzq/xj2go/cmd/...
+
+$ xj [-t json/xml] [-p sample] [-r result] sample.json
 ```
 Import it in your code:
 ```go
