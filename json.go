@@ -8,7 +8,10 @@ import (
 )
 
 func jsonToLeafNodes(root, filename string) ([]leafNode, error) {
-	m, err := jsonFileToMap(root+"Result", filename)
+	if root == "" {
+		root = "Result"
+	}
+	m, err := jsonFileToMap(root, filename)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -23,7 +26,7 @@ func jsonToLeafNodes(root, filename string) ([]leafNode, error) {
 	return reLeafNodes(lns, root)
 }
 
-func jsonFileToMap(top, filename string) (map[string]interface{}, error) {
+func jsonFileToMap(root, filename string) (map[string]interface{}, error) {
 	m := make(map[string]interface{})
 	val, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -34,16 +37,19 @@ func jsonFileToMap(top, filename string) (map[string]interface{}, error) {
 	}
 
 	if val[0] == '[' {
-		val = []byte(`{"` + top + `":` + string(val) + `}`)
+		val = []byte(`{"` + root + `":` + string(val) + `}`)
 	}
 
 	return jsonDecode(&m, &val)
 }
 
 func jsonBytesToMap(pkg, root string, b *[]byte) (map[string]interface{}, error) {
+	if root == "" {
+		root = "Result"
+	}
 	m := make(map[string]interface{})
 	if (*b)[0] == '[' {
-		*b = []byte(`{"` + root + "Result" + `":` + string(*b) + `}`)
+		*b = []byte(`{"` + root + `":` + string(*b) + `}`)
 	}
 
 	return jsonDecode(&m, b)
