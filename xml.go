@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"golang.org/x/net/html/charset"
 )
 
 type xmlVal struct {
@@ -40,6 +42,11 @@ func xmlToMap(filename string) (map[string]interface{}, error) {
 }
 
 func decodeXML(d *xml.Decoder, sk string, attr []xml.Attr) (map[string]interface{}, error) {
+	if d.CharsetReader == nil {
+		d.CharsetReader = func(c string, i io.Reader) (io.Reader, error) {
+			return charset.NewReaderLabel(c, i)
+		}
+	}
 	m := make(map[string]interface{})
 	ma := make(map[string]interface{})
 	if sk != "" {
