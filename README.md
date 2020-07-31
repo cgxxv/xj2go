@@ -1,6 +1,6 @@
 # xj2go
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/stackerzzq/xj2go)](https://goreportcard.com/badge/github.com/stackerzzq/xj2go) [![Build Status](https://www.travis-ci.org/stackerzzq/xj2go.svg?branch=master)](https://www.travis-ci.org/stackerzzq/xj2go) [![codecov](https://codecov.io/gh/stackerzzq/xj2go/branch/master/graph/badge.svg)](https://codecov.io/gh/stackerzzq/xj2go) [![codebeat badge](https://codebeat.co/badges/baec2a13-1f35-4032-bbf4-66cbead635c4)](https://codebeat.co/projects/github-com-stackerzzq-xj2go-master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wk30/xj2go)](https://goreportcard.com/badge/github.com/wk30/xj2go) [![Build Status](https://www.travis-ci.org/wk30/xj2go.svg?branch=master)](https://www.travis-ci.org/wk30/xj2go) [![codecov](https://codecov.io/gh/wk30/xj2go/branch/master/graph/badge.svg)](https://codecov.io/gh/wk30/xj2go) [![codebeat badge](https://codebeat.co/badges/baec2a13-1f35-4032-bbf4-66cbead635c4)](https://codebeat.co/projects/github-com-wk30-xj2go-master)
 
 The goal is to convert xml or json file to go struct file.
 
@@ -8,13 +8,13 @@ The goal is to convert xml or json file to go struct file.
 
 Download and install it:
 ```sh
-$ go get -u -v github.com/stackerzzq/xj2go/cmd/...
+$ go get -u -v github.com/wk30/xj2go/cmd/...
 
 $ xj [-t json/xml] [-p sample] [-r result] sample.json
 ```
 Import it in your code:
 ```go
-import "github.com/stackerzzq/xj2go"
+import "github.com/wk30/xj2go"
 ```
 ## Example
 
@@ -28,7 +28,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/stackerzzq/xj2go"
+	"github.com/wk30/xj2go"
 )
 
 func main() {

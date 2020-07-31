@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/stackerzzq/xj2go"
+	"github.com/wk30/xj2go"
 )
 
 func main() {

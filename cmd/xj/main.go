@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/stackerzzq/xj2go"
+	"github.com/wk30/xj2go"
 )
 
 func usage() {
