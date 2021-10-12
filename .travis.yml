@@ -2,7 +2,6 @@ language: go
 
 go:
   - 1.x
-  - master
 
 before_install:
   - go get -u -v github.com/campoy/embedmd
